@@ -1,49 +1,43 @@
 import "babel-polyfill";
 
-const assert = require('assert');
+const Auction = artifacts.require('./Auction.sol')
 const ganache = require('ganache-cli');
 const Web3 = require('web3');
 const web3 = new Web3(ganache.provider());
-const json = require('./../build/contracts/Auction.json');
-let accounts;
-let auction;
-let manager;
-const bytecode = json['bytecode'];
 
-beforeEach(async () => {
-  accounts = await web3.eth.getAccounts();
-  manager = accounts[0];
-  auction = await new web3.eth.Contract(json['abi'])
-      .deploy({ data: bytecode })
-      .send({ from: manager, gas: '1000000' });
-});
+let instance;
 
-describe('Auction', () => {
+contract('Auction', async (accounts) => {
+  beforeEach(async () => {
+    instance = await Auction.deployed();
+  })
+
   it('deploys a contract', async () => {
-    const auctionManager = await auction.methods.manager().call();
+    const auctionManager = await instance.manager();
+    let manager = accounts[0]
     assert.equal(manager, auctionManager, 'The manager is the one who launched the smart contract.');
   });
 
   it('auctions the item', async () => {
-    seller = accounts[1];
-    await auction.methods.auction(2).send({ from: seller });
-    auctionSeller = await auction.methods.seller().call();
+    let seller = accounts[1];
+    await instance.auction(2, { from: seller });
+    let auctionSeller = await instance.seller();
     assert.equal(auctionSeller, seller, 'The seller is the one who called the auction method.');
-    auctionBid = await auction.methods.latestBid().call();
+    let auctionBid = await instance.latestBid();
     assert.equal(auctionBid, web3.utils.toWei('2', 'ether'), 'The latest bid is the argument sent to auction method converted into wei.');
   });
 
   it('bids the item', async () => {
-    bidder = accounts[2];
-    await auction.methods.bid().send({ from: bidder, value: web3.utils.toWei('3', 'ether') });
-    auctionBid = await auction.methods.latestBid().call();
+    let bidder = accounts[2];
+    await instance.bid({ from: bidder, value: web3.utils.toWei('3', 'ether') });
+    let auctionBid = await instance.latestBid();
     assert.equal(auctionBid, web3.utils.toWei('3', 'ether'), 'The latest bid is the payment sent to bid method converted into wei.');
   });
 
   it('must bid above the latest bid amount', async () => {
-    bidder = accounts[2];
+    let bidder = accounts[2];
     try {
-      await auction.methods.bid().send({ from: bidder, value: web3.utils.toWei('1', 'ether') });
+      await instance.bid({ from: bidder, value: web3.utils.toWei('1', 'ether') });
       assert(false);
     } catch (err) {
       assert(err);
@@ -51,9 +45,9 @@ describe('Auction', () => {
   });
 
   it('only manager can finish the auction', async () => {
-    nonmanager = accounts[1];
+    let nonmanager = accounts[1];
     try {
-      await auction.methods.finishAuction().send({ from: nonmanager });
+      await instance.finishAuction({ from: nonmanager });
       assert(false);
     } catch (err) {
       assert(err);
@@ -61,8 +55,8 @@ describe('Auction', () => {
   });
 
   it('finishes the auction as manager', async () => {
-    manager = accounts[0];
-    await auction.methods.finishAuction().send({ from: manager });
+    let manager = accounts[0];
+    await instance.finishAuction({ from: manager });
     assert(true);
   });
-});
+})
