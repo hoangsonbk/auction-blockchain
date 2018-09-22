@@ -10,6 +10,7 @@ contract Auction {
   }
 
   function auction(uint bid) public {
+    require(latestBid == 0, "There is an ongoing auction. Wait until it is finished");
     latestBid = bid * 1 ether; //bid is calculated in wei
     seller = msg.sender;
   }
@@ -26,6 +27,7 @@ contract Auction {
 
   function finishAuction() restricted public {
     seller.transfer(address(this).balance);
+    latestBid = 0;
   }
 
   modifier restricted() {

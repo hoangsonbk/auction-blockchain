@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MetaCoin - Truffle Webpack Demo w/ Frontend</title>
+  <title>AuctionChain</title>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <script src="./app.js"></script>
 </head>
 <body>
-  <h1>MetaCoin</h1>
+  <h1>AuctionChain</h1>
   <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
 
   <br>
-  <h1>Send MetaCoin</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="App.sendCoin()">Send MetaCoin</button>
+  <div>
+    <h3>New Auction</h3>
+    <label for="init">Initial Price:</label>
+    <input type="text" id="init" placeholder="e.g., 1 ETH"></input>
+    <br><button id="submit" onclick="App.newAuction()">Submit</button>
+  </div>
+    
+  <div>
+    <h3>Bid Current Auction</h3>
+    <label for="bid">Bid:</label>
+    <input type="text" id="bid" placeholder="e.g., 95 ETH"></input>
+    <br>
+    <button id="submit" onclick="App.newBid()">Submit</button>
+    <button id="check" onclick="App.getCurrentBid()">Check Current Bid</button>
+  </div>
+  
   <br><br>
   <span id="status"></span>
   <br>
+  <div>
+    <button id="finish" onclick="App.finishAuction()">Finish Auction (Admin only)</button>
+  </div>
   <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
 </body>
 </html>

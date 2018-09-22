@@ -1,28 +1,19 @@
 // Import the page's CSS. Webpack will know what to do with it.
 import '../styles/app.css'
 
-// Import libraries we need.
 import { default as Web3 } from 'web3'
 import { default as contract } from 'truffle-contract'
 
-// Import our contract artifacts and turn them into usable abstractions.
-import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
+import AuctionContract from '../../build/contracts/Auction.json'
+const Auction = contract(AuctionContract)
 
-// MetaCoin is our usable abstraction, which we'll use through the code below.
-const MetaCoin = contract(metaCoinArtifact)
-
-// The following code is simple to show off interacting with your contracts.
-// As your needs grow you will likely need to change its form and structure.
-// For application bootstrapping, check out window.addEventListener below.
 let accounts
 let account
 
 const App = {
   start: function () {
-    const self = this
-
-    // Bootstrap the MetaCoin abstraction for Use.
-    MetaCoin.setProvider(web3.currentProvider)
+    console.log('Start loading app...')
+    Auction.setProvider(web3.currentProvider)
 
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function (err, accs) {
@@ -38,8 +29,7 @@ const App = {
 
       accounts = accs
       account = accounts[0]
-
-      self.refreshBalance()
+      console.log(accounts)
     })
   },
 
@@ -48,40 +38,54 @@ const App = {
     status.innerHTML = message
   },
 
-  refreshBalance: function () {
-    const self = this
-
-    let meta
-    MetaCoin.deployed().then(function (instance) {
-      meta = instance
-      return meta.getBalance.call(account, { from: account })
-    }).then(function (value) {
-      const balanceElement = document.getElementById('balance')
-      balanceElement.innerHTML = value.valueOf()
-    }).catch(function (e) {
-      console.log(e)
-      self.setStatus('Error getting balance; see log.')
+  getCurrentBid: function () {
+    this.setStatus('Getting current bid, please wait...')
+    Auction.deployed().then(instance => {
+      return instance.latestBid.call()
+    }).then(bid => {
+      const bidInEth = Web3.utils.fromWei(bid.toString(), 'ether');
+      this.setStatus(`Current highest bid is: ${bidInEth} ETH`)
+    }).catch(e => {
+      this.setStatus(e)
     })
   },
 
-  sendCoin: function () {
-    const self = this
+  newAuction: function () {
+    const amount = parseInt(document.getElementById('init').value)
+    console.log('About to make an auction with ' + amount + ' eth...')
+    this.setStatus('Register new auction...')
+    Auction.deployed().then(instance => {
+      return instance.auction(amount, { from: account })
+    }).then(() => {
+      this.setStatus('Register complete!')
+    }).catch(e => {
+      this.setStatus(e)
+    })
+  },
 
-    const amount = parseInt(document.getElementById('amount').value)
-    const receiver = document.getElementById('receiver').value
+  newBid: function () {
+    const amount = parseInt(document.getElementById('bid').value)
+    console.log('About to make an bid with ' + amount + ' eth...')
+    this.setStatus('Making a bid...')
+    Auction.deployed().then(instance => {
+      return instance.bid({
+        from: account,
+        value: Web3.utils.toWei(amount.toString(), 'ether')
+      })
+    }).then(() => {
+      this.setStatus('Bid complete!')
+    }).catch(e => {
+      this.setStatus(e)
+    })
+  },
 
-    this.setStatus('Initiating transaction... (please wait)')
-
-    let meta
-    MetaCoin.deployed().then(function (instance) {
-      meta = instance
-      return meta.sendCoin(receiver, amount, { from: account })
-    }).then(function () {
-      self.setStatus('Transaction complete!')
-      self.refreshBalance()
-    }).catch(function (e) {
-      console.log(e)
-      self.setStatus('Error sending coin; see log.')
+  finishAuction: function () {
+    Auction.deployed().then(instance => {
+      return instance.finishAuction({ from: account });
+    }).then(() => {
+      this.setStatus('Current Auction Finished!')
+    }).catch(e => {
+      this.setStatus(e)
     })
   }
 }
@@ -92,12 +96,7 @@ window.addEventListener('load', function () {
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
     console.warn(
-      'Using web3 detected from external source.' +
-      ' If you find that your accounts don\'t appear or you have 0 MetaCoin,' +
-      ' ensure you\'ve configured that source properly.' +
-      ' If using MetaMask, see the following link.' +
-      ' Feel free to delete this warning. :)' +
-      ' http://truffleframework.com/tutorials/truffle-and-metamask'
+      'Using web3 detected from external source.'
     )
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider)

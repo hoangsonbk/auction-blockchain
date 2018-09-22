@@ -6,7 +6,12 @@ module.exports = {
     development: {
       network_id: '*',
       host: '127.0.0.1',
-      port: 7545,
+      port: 9545,
+    },
+    private: {
+      network_id: '*',
+      host: '127.0.0.1',
+      port: 8545,
     },
   }
 }
