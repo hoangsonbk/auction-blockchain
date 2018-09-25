@@ -24,7 +24,7 @@ truffle test
 ## Configuration
 Truffle configuration can be found in `truffle.js` file.
 
-```
+```JavaScript
 module.exports = {
   networks: {
     development: {
@@ -38,8 +38,42 @@ module.exports = {
 
 Note that `host` and `port` should match with the ones showing in Ganache.
 
-## Deploying
-Coming soon...
+## Deploying to Testnet
+Switch Metamask to `Ropsten Test Network` and go to [Rospten Faucet](https://faucet.metamask.io/) to get some ETH.
+
+Go to [Infura](https://infura.io/), register a free account and get Infura `API_KEY`.
+
+Add Ropsten Nework configuration to `truffle.js`
+```JavaScript
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const MNENOMIC = process.env.MNENOMIC;
+const INFURA_URL = `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`;
+
+module.exports = {
+  networks: {
+    development: {
+      network_id: '*',
+      host: '127.0.0.1',
+      port: 9545,
+    },
+    private: {
+      network_id: '*',
+      host: '127.0.0.1',
+      port: 8545,
+    },
+    ropsten: {
+      provider: () => new HDWalletProvider( MNENOMIC, INFURA_URL),
+      network_id: 3,
+      gas: 470000,
+      gasPrice: 21
+    },
+  }
+}
+```
+Where
+|MNENOMIC|Your Metamask passphrase when creating new Metamask account|
+|INFURA_API_KEY|Your Infura account found in above step|
+
 
 ## Running with Metamask
 Coming soon...
