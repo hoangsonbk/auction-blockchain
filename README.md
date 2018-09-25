@@ -71,6 +71,9 @@ module.exports = {
 }
 ```
 Where
+
+|Key|Value|
+|----|----|
 |MNENOMIC|Your Metamask passphrase when creating new Metamask account|
 |INFURA_API_KEY|Your Infura account found in above step|
 
