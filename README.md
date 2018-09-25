@@ -1,3 +1,11 @@
+### Table of Content
+  * [Getting Started](#getting-started)
+  * [Running test cases](#running-test-cases)
+  * [Configuration](#configuration)
+  * [Connecting to Metamask](#connecting-to-metamask)
+  * [Running web application](#running-web-application)
+  * [Deploying to Testnet](#deploying-to-testnet)
+
 # Auction Blockchain
 A simple (and working) Smart Contract and Dapp for learning and testing purpose.
 The source code is inspired by [this article](https://medium.com/coinmonks/test-a-smart-contract-with-truffle-3eb8e1929370)
