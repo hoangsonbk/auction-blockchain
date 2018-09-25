@@ -1,5 +1,5 @@
 # Auction Blockchain
-A simple (and working) Dapp for learning and testing purpose.
+A simple (and working) Smart Contract and Dapp for learning and testing purpose.
 The source code is from [this article](https://medium.com/coinmonks/test-a-smart-contract-with-truffle-3eb8e1929370)
 
 ## Getting Started
@@ -37,6 +37,12 @@ module.exports = {
 ```
 
 Note that `host` and `port` should match with the ones showing in Ganache.
+
+## Connecting to Metamask
+Coming soon...
+
+## Running web application
+Coming soon...
 
 ## Deploying to Testnet
 Switch Metamask to `Ropsten Test Network` and go to [Rospten Faucet](https://faucet.metamask.io/) to get some ETH.
@@ -76,7 +82,3 @@ Where
 |----|----|
 |MNENOMIC|Your Metamask passphrase when creating new Metamask account|
 |INFURA_API_KEY|Your Infura account found in above step|
-
-
-## Running with Metamask
-Coming soon...
