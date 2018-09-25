@@ -41,7 +41,7 @@ Note that `host` and `port` should match with the ones showing in Ganache.
 ## Deploying to Testnet
 Switch Metamask to `Ropsten Test Network` and go to [Rospten Faucet](https://faucet.metamask.io/) to get some ETH.
 
-Go to [Infura](https://infura.io/), register a free account and get Infura `API_KEY`.
+You can use Infura to deploy smart contracts to mainnet as well as test nets without requiring you to have a synced node running locally. Go to [Infura](https://infura.io/), register a free account and get Infura `INFURA_API_KEY`.
 
 Add Ropsten Nework configuration to `truffle.js`
 ```JavaScript
