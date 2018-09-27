@@ -6,6 +6,7 @@ import { default as contract } from 'truffle-contract'
 
 import AuctionContract from '../../build/contracts/Auction.json'
 const Auction = contract(AuctionContract)
+// const address = '0x09171da6d7b2490c8a530d76d08f9e56635d982f'
 
 let accounts
 let account
@@ -14,7 +15,8 @@ const App = {
   start: function () {
     console.log('Start loading app...')
     Auction.setProvider(web3.currentProvider)
-
+    Auction.setNetwork(3) // Ropsten Test Net ID
+    window.Auction = Auction;
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function (err, accs) {
       if (err != null) {
@@ -43,7 +45,8 @@ const App = {
     Auction.deployed().then(instance => {
       return instance.latestBid.call()
     }).then(bid => {
-      const bidInEth = Web3.utils.fromWei(bid.toString(), 'ether');
+      // const bidInEth = Web3.utils.fromWei(bid.toString(), 'ether'); // when running locally
+      const bidInEth = window.web3.fromWei(bid.toString(), 'ether');
       this.setStatus(`Current highest bid is: ${bidInEth} ETH`)
     }).catch(e => {
       this.setStatus(e)
@@ -57,7 +60,7 @@ const App = {
     Auction.deployed().then(instance => {
       return instance.auction(amount, { from: account })
     }).then(() => {
-      this.setStatus('Register complete!')
+      this.setStatus('Registe complete!')
     }).catch(e => {
       this.setStatus(e)
     })
@@ -70,7 +73,7 @@ const App = {
     Auction.deployed().then(instance => {
       return instance.bid({
         from: account,
-        value: Web3.utils.toWei(amount.toString(), 'ether')
+        value: window.web3.toWei(amount.toString(), 'ether')
       })
     }).then(() => {
       this.setStatus('Bid complete!')
